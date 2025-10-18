@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -21,6 +24,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders += mapOf()
+            isDebuggable = true
+            manifestPlaceholders["appName"] = "PokeDex"
+            applicationIdSuffix = ".debug"
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:3000/\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -74,6 +90,6 @@ dependencies {
 
 //    Hilt-dependency-injection
     implementation(libs.hilt.android)
-    implementation(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
 }
