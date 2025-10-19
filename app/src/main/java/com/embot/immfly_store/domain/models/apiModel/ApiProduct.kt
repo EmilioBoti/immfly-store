@@ -1,10 +1,13 @@
 package com.embot.immfly_store.domain.models.apiModel
 
+import com.google.gson.annotations.SerializedName
+
 
 data class ApiProduct(
-    val id: String,
-    val name: String,
-    val descritopn: String,
-    val image: String,
-    val stock: Int
+    @SerializedName("id")  val id: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("price") val price: Double,
+    @SerializedName("image") val image: String,
+    @SerializedName("stock") val stock: Int
 )
