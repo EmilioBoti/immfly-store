@@ -13,6 +13,7 @@ object ProductUtils {
                 description = apiProduct.description,
                 price = apiProduct.price,
                 imageUrl = apiProduct.image,
+                stock = apiProduct.stock
             )
         }
     }

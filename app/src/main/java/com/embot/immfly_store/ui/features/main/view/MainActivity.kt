@@ -1,11 +1,10 @@
-package com.embot.immfly_store
+package com.embot.immfly_store.ui.features.main.view
 
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CurrencyExchange
@@ -36,7 +35,6 @@ import com.embot.immfly_store.ui.theme.PrimaryColor
 import com.embot.immfly_store.ui.utils.NavUtils
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -48,7 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ImmflystoreTheme {
                 Scaffold(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.Companion.fillMaxSize(),
                     topBar = {
                         CenterAlignedTopAppBar(
                             title = {
@@ -66,8 +64,8 @@ class MainActivity : ComponentActivity() {
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = PrimaryColor,
-                                titleContentColor = Color.White,
-                                actionIconContentColor = Color.White
+                                titleContentColor = Color.Companion.White,
+                                actionIconContentColor = Color.Companion.White
                             )
                         )
                     },
@@ -91,7 +89,7 @@ class MainActivity : ComponentActivity() {
                             val viewModel: ProductListViewModel = hiltViewModel()
                             ProductListScreen(
                                 paddingValues = innerPadding,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.Companion.fillMaxSize(),
                                 viewModel = viewModel
                             )
                         }
