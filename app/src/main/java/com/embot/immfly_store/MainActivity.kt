@@ -6,26 +6,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -37,6 +32,7 @@ import com.embot.immfly_store.ui.features.productList.view.ProductListScreen
 import com.embot.immfly_store.ui.features.productList.viewModel.ProductListViewModel
 import com.embot.immfly_store.ui.navigation.PokemonListRoute
 import com.embot.immfly_store.ui.theme.ImmflystoreTheme
+import com.embot.immfly_store.ui.theme.PrimaryColor
 import com.embot.immfly_store.ui.utils.NavUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -69,7 +65,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = Color.Red,
+                                containerColor = PrimaryColor,
                                 titleContentColor = Color.White,
                                 actionIconContentColor = Color.White
                             )

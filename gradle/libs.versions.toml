@@ -10,6 +10,10 @@ activityCompose = "1.11.0"
 composeBom = "2025.10.00"
 #kotlinKsp
 kotlinKsp = "2.2.20-2.0.4"
+
+#Coil
+coilComposeVersion = "2.7.0"
+
 #Navigation
 navigationCompose = "2.9.5"
 #Coroutines
@@ -42,6 +46,9 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 #Icons
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-material3-icons-extended = { module = "androidx.compose.material3:material3-icons-extended" }
+
+#Coil
+coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 
 #Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
