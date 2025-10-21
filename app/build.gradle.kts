@@ -96,7 +96,10 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
 
-//    Hilt-dependency-injection
+    //Datastore Preferences
+    implementation(libs.androidx.datastore.preferences)
+
+    //Hilt-dependency-injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 

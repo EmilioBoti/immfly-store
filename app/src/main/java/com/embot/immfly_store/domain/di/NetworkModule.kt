@@ -1,10 +1,14 @@
 package com.embot.immfly_store.domain.di
 
+import android.content.Context
 import com.embot.immfly_store.BuildConfig
 import com.embot.immfly_store.domain.service.IProductService
+import com.embot.immfly_store.domain.service.localResource.preference.AppDataStore
+import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Qualifier
 import jakarta.inject.Singleton
@@ -16,6 +20,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+
+    @Provides
+    @Singleton
+    fun provideAppDataStore(
+        @ApplicationContext context: Context
+    ): IAppDataStore = AppDataStore(context)
 
     @ProductApiHttpClient
     @Provides

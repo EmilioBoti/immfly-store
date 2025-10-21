@@ -20,6 +20,8 @@ navigationCompose = "2.9.5"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxSerializationJson = "1.9.0"
 lifecycleViewModelKtx = "2.9.4"
+#Datastore Preferences
+datastorePreferences = "1.1.7"
 #Retrofit
 retrofit = "3.0.0"
 loggingInterceptor = "5.2.1"
@@ -64,6 +66,9 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+
+#Datastore Preferences
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 #Hilt-dependency-injection
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
