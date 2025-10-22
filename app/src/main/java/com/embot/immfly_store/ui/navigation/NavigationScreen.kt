@@ -15,8 +15,8 @@ fun NavigationScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
-    NavHost(navController = navController, startDestination = PokemonListRoute) {
-        composable<PokemonListRoute> {
+    NavHost(navController = navController, startDestination = ProdcutListRoute) {
+        composable<ProdcutListRoute> {
             val viewModel: ProductListViewModel = hiltViewModel()
 //            ProductListScreen(modifier,
 //                viewModel

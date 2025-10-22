@@ -4,4 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-object PokemonListRoute
+object ProdcutListRoute
+
+@Serializable
+object CartRoute

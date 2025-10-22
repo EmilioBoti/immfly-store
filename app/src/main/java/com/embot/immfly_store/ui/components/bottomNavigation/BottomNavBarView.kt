@@ -5,8 +5,10 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.embot.immfly_store.ui.navigation.NavItem
+import com.embot.immfly_store.ui.utils.NavUtils
 
 
 @Composable
@@ -15,20 +17,23 @@ fun BottomNavBarView(
     itemSelected: Int,
     onItemSelected: (Int) -> Unit
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = Color.White,
+    ) {
         items.forEachIndexed { index, navItem ->
+            val isSelected = itemSelected == index
             NavigationBarItem(
-                selected = itemSelected == index,
+                selected = isSelected,
                 onClick = { onItemSelected(index) },
                 icon = {
                     Icon(
                         imageVector = navItem.icon,
-                        contentDescription = navItem.label
+                        contentDescription = navItem.label,
                     )
                 },
                 label = {
                     Text(
-                        text = navItem.label
+                        text = navItem.label,
                     )
                 }
             )
@@ -41,10 +46,10 @@ fun BottomNavBarView(
 @Preview(showBackground = true)
 @Composable
 fun BottomNavBarViewPreview() {
-//    BottomNavBarView(
-//        items = nav,
-//        0
-//    ) {
-//
-//    }
+    BottomNavBarView(
+        items = NavUtils.navItem,
+        0
+    ) {
+
+    }
 }

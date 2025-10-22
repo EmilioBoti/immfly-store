@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,10 +30,12 @@ import androidx.navigation.compose.rememberNavController
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.ui.components.bottomNavigation.BottomNavBarView
 import com.embot.immfly_store.ui.components.displayer.CurrencyPopUp
+import com.embot.immfly_store.ui.features.cartProducts.view.CartProductStateful
 import com.embot.immfly_store.ui.features.main.viewModel.MainActivityViewModel
 import com.embot.immfly_store.ui.features.productList.view.ProductListScreen
 import com.embot.immfly_store.ui.features.productList.viewModel.ProductListViewModel
-import com.embot.immfly_store.ui.navigation.PokemonListRoute
+import com.embot.immfly_store.ui.navigation.CartRoute
+import com.embot.immfly_store.ui.navigation.ProdcutListRoute
 import com.embot.immfly_store.ui.theme.ImmflystoreTheme
 import com.embot.immfly_store.ui.theme.PrimaryColor
 import com.embot.immfly_store.ui.utils.NavUtils
@@ -51,6 +52,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ImmflystoreTheme {
                 val mainViewModel: MainActivityViewModel = hiltViewModel()
+                val navController = rememberNavController()
+
                 Scaffold(
                     modifier = Modifier.Companion.fillMaxSize(),
                     topBar = {
@@ -78,15 +81,21 @@ class MainActivity : ComponentActivity() {
                     },
                     bottomBar = {
                         var itemSelected by remember { mutableIntStateOf(0) }
-                        BottomAppBar {
-                            BottomNavBarView(
-                                items = NavUtils.navItem,
-                                itemSelected = itemSelected,
-                                onItemSelected = { index ->
-                                    itemSelected = index
+                        BottomNavBarView(
+                            items = NavUtils.navItem,
+                            itemSelected = itemSelected,
+                            onItemSelected = { index ->
+                                itemSelected = index
+                                when(itemSelected) {
+                                    0 -> navController.navigate(ProdcutListRoute) {
+                                        popUpTo<ProdcutListRoute> { inclusive = true }
+                                    }
+                                    1 -> navController.navigate(CartRoute) {
+                                        popUpTo<CartRoute> { inclusive = true }
+                                    }
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
                 ) { innerPadding ->
                     val isOpen by mainViewModel.isCurrencyPickerOpen.collectAsStateWithLifecycle()
@@ -101,10 +110,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    val navController = rememberNavController()
-
-                    NavHost(navController = navController, startDestination = PokemonListRoute) {
-                        composable<PokemonListRoute> {
+                    NavHost(navController = navController, startDestination = ProdcutListRoute) {
+                        composable<ProdcutListRoute> {
                             val viewModel: ProductListViewModel = hiltViewModel()
 
                             LaunchedEffect(selectedCurrency) {
@@ -114,6 +121,12 @@ class MainActivity : ComponentActivity() {
                             ProductListScreen(
                                 paddingValues = innerPadding,
                                 viewModel = viewModel
+                            )
+                        }
+                        composable<CartRoute> {
+
+                            CartProductStateful(
+                                paddingValues = innerPadding
                             )
                         }
                     }
