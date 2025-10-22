@@ -14,8 +14,12 @@ class ProductListModule {
 
 
     @Provides
-    fun provideProductListRepository(productService: IProductService): IProductListRepository {
-        return ProductListRepository(productService)
+    fun provideProductListRepository(
+        productService: IProductService
+    ): IProductListRepository {
+        return ProductListRepository(
+            productService = productService
+        )
     }
 
 }

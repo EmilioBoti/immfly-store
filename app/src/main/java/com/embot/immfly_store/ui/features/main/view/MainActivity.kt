@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +24,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.ui.components.bottomNavigation.BottomNavBarView
+import com.embot.immfly_store.ui.components.displayer.CurrencyPopUp
+import com.embot.immfly_store.ui.features.main.viewModel.MainActivityViewModel
 import com.embot.immfly_store.ui.features.productList.view.ProductListScreen
 import com.embot.immfly_store.ui.features.productList.viewModel.ProductListViewModel
 import com.embot.immfly_store.ui.navigation.PokemonListRoute
@@ -45,6 +50,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ImmflystoreTheme {
+                val mainViewModel: MainActivityViewModel = hiltViewModel()
                 Scaffold(
                     modifier = Modifier.Companion.fillMaxSize(),
                     topBar = {
@@ -54,6 +60,7 @@ class MainActivity : ComponentActivity() {
                             },
                             actions = {
                                 IconButton(onClick = {
+                                    mainViewModel.openCurrencyPicker()
                                     Log.i("CurrencyExchange", "Currency Exchange clicked")
                                 }) {
                                     Icon(
@@ -82,11 +89,28 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
+                    val isOpen by mainViewModel.isCurrencyPickerOpen.collectAsStateWithLifecycle()
+                    val selectedCurrency by mainViewModel.selectedCurrency.collectAsStateWithLifecycle(CurrencyType.USD)
+
+                    if (isOpen) {
+                        CurrencyPopUp(
+                            currentCurrency = selectedCurrency,
+                            onDismiss = { mainViewModel.openCurrencyPicker() }
+                        ) { currency ->
+                            mainViewModel.setCurrencySelected(currency)
+                        }
+                    }
+
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = PokemonListRoute) {
                         composable<PokemonListRoute> {
                             val viewModel: ProductListViewModel = hiltViewModel()
+
+                            LaunchedEffect(selectedCurrency) {
+                                viewModel.updateCurrencyType(selectedCurrency)
+                            }
+
                             ProductListScreen(
                                 paddingValues = innerPadding,
                                 modifier = Modifier.Companion.fillMaxSize(),
