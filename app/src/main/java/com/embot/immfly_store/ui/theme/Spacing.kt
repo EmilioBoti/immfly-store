@@ -16,6 +16,7 @@ data class Spacing(
     val medium: Dp = 16.dp,
     val large: Dp = 24.dp,
     val cardProductRadius: Dp = 30.dp,
+    val currencyPopUpWidth: Dp = 350.dp,
     val cardInnerRadius: Dp = 22.dp,
     val cartButtonRadius: Dp = 12.dp,
     val imageHeight: Dp = 230.dp,

@@ -23,16 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.embot.immfly_store.R
-import com.embot.immfly_store.domain.models.appModel.ProductModel
-import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.domain.models.uiState.ProductItemState
 import com.embot.immfly_store.ui.theme.YellowColor
 import com.embot.immfly_store.ui.theme.spacing
@@ -54,7 +52,8 @@ fun CardProduct(
                 .padding(MaterialTheme.spacing.medium)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .height(MaterialTheme.spacing.imageHeight)
                     .clip(
                         shape = RoundedCornerShape(
@@ -69,7 +68,8 @@ fun CardProduct(
                 )
             }
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(MaterialTheme.spacing.none, MaterialTheme.spacing.extralNormal),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.gapExtralSmall)
             ) {
@@ -115,15 +115,29 @@ fun CardProduct(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "$ ${product.price}",
-                    style = TextStyle(
-                        fontSize = MaterialTheme.spacing.textLarge,
-                        fontFamily = FontFamily(Font(R.font.notosans_bold700))
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column {
+                    Text(
+                        text = product.price,
+                        style = TextStyle(
+                            fontSize = MaterialTheme.spacing.textLarge,
+                            fontFamily = FontFamily(Font(R.font.notosans_bold700))
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    product.currencies.map { it }.forEach { it ->
+                        Text(
+                            text = "≈ $it",
+                            style = TextStyle(
+                                fontSize = MaterialTheme.spacing.textSmall,
+                                fontFamily = FontFamily(Font(R.font.notosans_regular400)),
+                                fontStyle = FontStyle.Italic
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
                 Button (
                     onClick = { /*TODO*/ },
                     shape = RoundedCornerShape(MaterialTheme.spacing.cartButtonRadius),
@@ -162,11 +176,12 @@ fun CardProductPreview() {
             id = "4",
             name = "Samsung Galaxy Watch6 Classic BT",
             description = "Este fantástico smartwatch de Samsung cae de precio en el outlet de MediaMarkt. La principal característica de este modelo es su dial giratorio, con el que podemos controlar la navegación del mismo. Permite responder mensajes, llamadas y pagar, además de monitorizar nuestra salud.",
-            price = 339.99,
+            price = "$339.99",
+            rawPrice = "$339.99",
+            currencies = listOf(),
             stock = 8,
             imageUrl = "https://raw.githubusercontent.com/EmilioBoti/api-server/refs/heads/master/public/Samsung-Galaxy-watch6-classic-BT.png",
-            isBucketed = false,
-            currencyType = CurrencyType.EUR
+            isBucketed = false
         )
     )
 }

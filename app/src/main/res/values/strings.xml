@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">immfly-store</string>
+    <string name="current_name_euro">Euro</string>
+    <string name="current_name_dollar">Dollar</string>
+    <string name="current_name_pound">Pound</string>
 </resources>
