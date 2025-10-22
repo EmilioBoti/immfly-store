@@ -1,6 +1,8 @@
 package com.embot.immfly_store.ui.components.productList
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -32,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.embot.immfly_store.R
 import com.embot.immfly_store.domain.models.uiState.ProductItemState
+import com.embot.immfly_store.ui.theme.GreenColor
 import com.embot.immfly_store.ui.theme.YellowColor
 import com.embot.immfly_store.ui.theme.spacing
 
@@ -39,7 +43,8 @@ import com.embot.immfly_store.ui.theme.spacing
 @Composable
 fun CardProduct(
     modifier: Modifier = Modifier,
-    product: ProductItemState
+    product: ProductItemState,
+    onAction: (product: ProductItemState) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -86,7 +91,7 @@ fun CardProduct(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Stoke: ",
+                        text = "${stringResource(R.string.stock)}: ",
                         style = TextStyle(
                             fontSize = MaterialTheme.spacing.textSmall,
                             fontFamily = FontFamily(Font(R.font.notosans_light300))
@@ -139,10 +144,10 @@ fun CardProduct(
                     }
                 }
                 Button (
-                    onClick = { /*TODO*/ },
+                    onClick = {  onAction(product) },
                     shape = RoundedCornerShape(MaterialTheme.spacing.cartButtonRadius),
                     colors = ButtonColors(
-                        containerColor = YellowColor,
+                        containerColor = if(product.isBucketed) GreenColor else YellowColor,
                         contentColor = Color.White,
                         disabledContainerColor = Color.White,
                         disabledContentColor = Color.Black
@@ -153,7 +158,7 @@ fun CardProduct(
                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.gapExtralSmall)
                     ) {
                         Text(
-                            text = "Add",
+                            text = if(product.isBucketed) stringResource(R.string.remove_from_cart) else stringResource(R.string.add_from_cart),
                             style = TextStyle(
                                 fontFamily = FontFamily(Font(R.font.notosans_semibold600))
                             ),
@@ -181,7 +186,9 @@ fun CardProductPreview() {
             currencies = listOf(),
             stock = 8,
             imageUrl = "https://raw.githubusercontent.com/EmilioBoti/api-server/refs/heads/master/public/Samsung-Galaxy-watch6-classic-BT.png",
-            isBucketed = false
+            isBucketed = true
         )
-    )
+    ) {
+
+    }
 }

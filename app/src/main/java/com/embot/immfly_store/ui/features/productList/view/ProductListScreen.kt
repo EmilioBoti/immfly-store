@@ -17,5 +17,7 @@ fun ProductListScreen(
     ProductListScreenStateful(
         paddingValues = paddingValues,
         products
-    )
+    ) { product ->
+        viewModel.onAction(product)
+    }
 }

@@ -3,4 +3,7 @@
     <string name="current_name_euro">Euro</string>
     <string name="current_name_dollar">Dollar</string>
     <string name="current_name_pound">Pound</string>
+    <string name="stock">Stock</string>
+    <string name="add_from_cart">Add to cart</string>
+    <string name="remove_from_cart">Remove from cart</string>
 </resources>

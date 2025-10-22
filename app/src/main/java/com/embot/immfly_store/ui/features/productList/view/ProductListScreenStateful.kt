@@ -19,7 +19,8 @@ import com.embot.immfly_store.ui.theme.ReadColor
 @Composable
 fun ProductListScreenStateful(
     paddingValues: PaddingValues,
-    products: List<ProductItemState>
+    products: List<ProductItemState>,
+    onAction: (product: ProductItemState) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -34,7 +35,8 @@ fun ProductListScreenStateful(
             ) { product ->
                 CardProduct(
                     modifier = Modifier.padding(2.dp),
-                    product = product
+                    product = product,
+                    onAction =  onAction
                 )
             }
         }
@@ -70,5 +72,7 @@ fun ProductListScreenStatefulPreview() {
                 isBucketed = false
             )
         )
-    )
+    ) {
+        
+    }
 }

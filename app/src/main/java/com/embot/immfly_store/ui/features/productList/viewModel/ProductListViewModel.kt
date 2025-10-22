@@ -62,9 +62,9 @@ class ProductListViewModel @Inject constructor(
                     val productDeferred = async { productRepository.getAllProducts() }
 
                     Triple(
-                        currencyDeferred.await(),
-                        productDeferred.await(),
-                        cartProductsDeferred.await()
+                        first = currencyDeferred.await(),
+                        second = productDeferred.await(),
+                        third = cartProductsDeferred.await()
                     )
                 }
 
@@ -99,7 +99,7 @@ class ProductListViewModel @Inject constructor(
 
     private fun removeProduct(productEntity: ProductEntity) {
         viewModelScope.launch {
-            val res = productRepository.addProductToCart(productEntity)
+            val res = productRepository.removeProductFromCart(productEntity)
             res.onSuccess {
                 cartProducts.remove(productEntity)
                 updateProduct()
