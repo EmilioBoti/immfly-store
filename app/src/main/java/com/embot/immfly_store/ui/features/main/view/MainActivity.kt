@@ -113,7 +113,6 @@ class MainActivity : ComponentActivity() {
 
                             ProductListScreen(
                                 paddingValues = innerPadding,
-                                modifier = Modifier.Companion.fillMaxSize(),
                                 viewModel = viewModel
                             )
                         }
