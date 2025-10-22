@@ -10,10 +10,8 @@ activityCompose = "1.11.0"
 composeBom = "2025.10.00"
 #kotlinKsp
 kotlinKsp = "2.2.20-2.0.4"
-
 #Coil
 coilComposeVersion = "2.7.0"
-
 #Navigation
 navigationCompose = "2.9.5"
 #Coroutines
@@ -22,6 +20,8 @@ kotlinxSerializationJson = "1.9.0"
 lifecycleViewModelKtx = "2.9.4"
 #Datastore Preferences
 datastorePreferences = "1.1.7"
+#Room-Database
+roomRuntime = "2.8.2"
 #Retrofit
 retrofit = "3.0.0"
 loggingInterceptor = "5.2.1"
@@ -69,6 +69,12 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 
 #Datastore Preferences
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+
+#Room-Database
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+
 
 #Hilt-dependency-injection
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }

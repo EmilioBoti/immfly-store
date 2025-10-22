@@ -3,6 +3,8 @@ package com.embot.immfly_store.domain.di
 import android.content.Context
 import com.embot.immfly_store.BuildConfig
 import com.embot.immfly_store.domain.service.IProductService
+import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDao
+import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDatabase
 import com.embot.immfly_store.domain.service.localResource.preference.AppDataStore
 import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import dagger.Module
@@ -26,6 +28,14 @@ object NetworkModule {
     fun provideAppDataStore(
         @ApplicationContext context: Context
     ): IAppDataStore = AppDataStore(context)
+
+
+    @Provides
+    @Singleton
+    fun provideRoomDatabase(
+        @ApplicationContext context: Context
+    ): ProductDao = ProductDatabase.getDatabaseInstance(context).productDao()
+
 
     @ProductApiHttpClient
     @Provides

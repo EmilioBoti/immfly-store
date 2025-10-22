@@ -98,6 +98,10 @@ dependencies {
 
     //Datastore Preferences
     implementation(libs.androidx.datastore.preferences)
+    //Room-Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     //Hilt-dependency-injection
     implementation(libs.hilt.android)
