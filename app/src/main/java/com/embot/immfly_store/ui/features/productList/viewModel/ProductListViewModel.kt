@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.embot.immfly_store.domain.models.appModel.ProductModel
 import com.embot.immfly_store.domain.models.constants.CurrencyType
+import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
 import com.embot.immfly_store.domain.models.uiState.ProductItemState
 import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import com.embot.immfly_store.domain.useCase.ConvertCurrencyUseCase
@@ -33,6 +34,8 @@ class ProductListViewModel @Inject constructor(
 ): ViewModel() {
 
     private var currentCurrencyType: CurrencyType = CurrencyType.EUR
+    private var cartProducts: ArrayList<ProductEntity> = arrayListOf()
+
     private val _product: MutableStateFlow<List<ProductItemState>> = MutableStateFlow(listOf())
     val product: StateFlow<List<ProductItemState>> = _product.onStart {
         getAllProducts()
@@ -48,17 +51,24 @@ class ProductListViewModel @Inject constructor(
         udpateProductCurrenry(currentCurrencyType)
     }
 
-    fun getAllProducts() {
+    private fun getAllProducts() {
         viewModelScope.launch {
             try {
                 currentCurrencyType = preferences.getCurrencyType().first()
 
-                val (currencyResponse, productResponse) = coroutineScope {
+                val (currencyResponse, productResponse, cartProducts) = coroutineScope {
+                    val cartProductsDeferred = async { productRepository.getAllCartProduct() }
                     val currencyDeferred = async { productRepository.getCurrencyRate() }
                     val productDeferred = async { productRepository.getAllProducts() }
 
-                    currencyDeferred.await() to productDeferred.await()
+                    Triple(
+                        currencyDeferred.await(),
+                        productDeferred.await(),
+                        cartProductsDeferred.await()
+                    )
                 }
+
+                cartProducts.onSuccess { cart -> this@ProductListViewModel.cartProducts.addAll(cart)  }
 
                 currencyResponse.onSuccess {
                     currencyUseCase.setCurrencyRate(ProductUtils.toAppCurrencyRate(it))
@@ -66,7 +76,7 @@ class ProductListViewModel @Inject constructor(
 
                 productResponse.onSuccess { apiProducts ->
                     val products = ProductUtils.parseToAppProduct(apiProducts)
-                    _product.update { parseToProdcutState(products) }
+                    _product.update { parseToProdcutState(products, this@ProductListViewModel.cartProducts) }
                 }.onFailure {
                     print(it.message)
                 }
@@ -76,7 +86,32 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
-    fun parseToProdcutState(products: List<ProductModel>): List<ProductItemState> {
+    private fun storeProduct(productEntity: ProductEntity) {
+        viewModelScope.launch {
+            val res = productRepository.addProductToCart(productEntity)
+            res.onSuccess {
+                cartProducts.add(productEntity)
+                updateProduct()
+            }
+            res.onFailure { }
+        }
+    }
+
+    private fun removeProduct(productEntity: ProductEntity) {
+        viewModelScope.launch {
+            val res = productRepository.addProductToCart(productEntity)
+            res.onSuccess {
+                cartProducts.remove(productEntity)
+                updateProduct()
+            }
+            res.onFailure { }
+        }
+    }
+
+    private fun parseToProdcutState(
+        products: List<ProductModel>,
+        cartProducts: ArrayList<ProductEntity>
+    ): List<ProductItemState> {
         return products.map { prod ->
             ProductItemState(
                 id = prod.id,
@@ -87,12 +122,26 @@ class ProductListViewModel @Inject constructor(
                 currencies = getConvertedValues(BigDecimal("${prod.price}")),
                 imageUrl = prod.imageUrl,
                 stock = prod.stock,
-                isBucketed = false
+                isBucketed = isProdcutICart(prod.id, cartProducts)
             )
         }
     }
 
-    fun udpateProductCurrenry(currencyType: CurrencyType) {
+    private fun isProdcutICart(prodId: String, cartProducts: ArrayList<ProductEntity>): Boolean {
+        return cartProducts.firstOrNull { it.id == prodId } !== null
+    }
+
+    private fun updateProduct() {
+        _product.update {
+            it.map { prod ->
+                prod.copy(
+                    isBucketed = isProdcutICart(prod.id, cartProducts)
+                )
+            }
+        }
+    }
+
+    private fun udpateProductCurrenry(currencyType: CurrencyType) {
         _product.update {
             it.map { prod ->
                 prod.copy(
@@ -103,12 +152,30 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
-    fun getConvertedValues(amount: BigDecimal): List<String> {
+    private fun getConvertedValues(amount: BigDecimal): List<String> {
         val currencies = currencyUseCase.getConvertedValues(amount, currentCurrencyType.type)
         return currencies.mapValues { (target, value) ->
             val locale = currencyUseCase.getLocaleCurrency(target?.currencyCode ?: "")
             CurrencyFormatter.formatCurrency(value, currencyCode = target?.currencyCode ?: "", locale)
         }.map { it.value }
     }
+
+    fun onAction(product: ProductItemState) {
+        if (product.isBucketed) {
+            val toRemove = this.cartProducts.firstOrNull { it.id == product.id }
+            toRemove?.let { removeProduct(it) }
+        } else {
+            val toSave = ProductEntity(
+                id = product.id,
+                name = product.name,
+                description = product.description,
+                price = product.price,
+                image = product.imageUrl,
+                stock = product.stock
+            )
+            storeProduct(toSave)
+        }
+    }
+
 
 }
