@@ -48,4 +48,15 @@ class CartProductRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteFromCart(id: String): Result<Boolean> {
+        return withContext(Dispatchers.IO) {
+            try {
+                localDatabase.deleteFromCart(id)
+                Result.success(true)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
 }

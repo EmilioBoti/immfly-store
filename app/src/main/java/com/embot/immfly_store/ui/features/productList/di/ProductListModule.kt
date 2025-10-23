@@ -1,5 +1,6 @@
 package com.embot.immfly_store.ui.features.productList.di
 
+import com.embot.immfly_store.domain.service.DispatchersProvider
 import com.embot.immfly_store.domain.service.IProductService
 import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDao
 import com.embot.immfly_store.ui.features.productList.repository.IProductListRepository
@@ -16,10 +17,12 @@ class ProductListModule {
 
     @Provides
     fun provideProductListRepository(
+        dispatchersProvider: DispatchersProvider,
         localDatabase: ProductDao,
         productService: IProductService
     ): IProductListRepository {
         return ProductListRepository(
+            dispatchersProvider = dispatchersProvider,
             localDatabase = localDatabase,
             productService = productService
         )

@@ -2,6 +2,7 @@ package com.embot.immfly_store.ui.features.cartProducts.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,8 +27,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.embot.immfly_store.R
+import com.embot.immfly_store.domain.models.uiState.ActionCartState
 import com.embot.immfly_store.domain.models.uiState.CartItemState
+import com.embot.immfly_store.domain.models.uiState.DisplayActionState
 import com.embot.immfly_store.ui.components.cartProduct.CartProductItem
+import com.embot.immfly_store.ui.components.displayer.InfoActionPopUp
 import com.embot.immfly_store.ui.theme.ReadColor
 import com.embot.immfly_store.ui.theme.YellowColor
 import com.embot.immfly_store.ui.theme.spacing
@@ -39,71 +43,107 @@ fun CartProductScreen(
     paddingValues: PaddingValues,
     cartItems: List<CartItemState>,
     totalPrice: String,
+    actionState: DisplayActionState,
     decrease: (CartItemState) -> Unit,
-    increase : (CartItemState) -> Unit
+    increase: (CartItemState) -> Unit,
+    delete: (CartItemState) -> Unit,
+    confirmDelete: (Boolean) -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(paddingValues)
-            .background(ReadColor)
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(MaterialTheme.spacing.extraSmall)
-        ) {
-            items(
-                items = cartItems,
-                key = { it.id }
-            ) { cartItmes ->
-                CartProductItem(
-                    modifier = Modifier.padding(MaterialTheme.spacing.extraSmall),
-                    product = cartItmes,
-                    decrease = decrease,
-                    increase = increase
-                )
+
+    Box {
+        if (actionState.isOpen) {
+            when (actionState.actionCartState) {
+                is ActionCartState.CartError -> {
+                    if (actionState.actionCartState.isError) {
+                        InfoActionPopUp(
+                            title = "Error",
+                            message = actionState.actionCartState.message,
+                            confirmText = "confirm",
+                            cancelText = "Cancel",
+                            isSingleAction = true,
+                            onConfirm = { confirmDelete(true) },
+                            onDismiss = { confirmDelete(false) }
+                        )
+                    }
+                }
+                ActionCartState.ConfirmDelete -> {
+                    InfoActionPopUp(
+                        title = "Delete",
+                        message = "Are you sure you want to delete this item?",
+                        confirmText = "confirm",
+                        cancelText = "Cancel",
+                        onConfirm = { confirmDelete(true) },
+                        onDismiss = { confirmDelete(false) }
+                    )
+                }
+                ActionCartState.DeleteSuccess -> {}
+                null -> {}
             }
         }
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .background(ReadColor)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(MaterialTheme.spacing.extralNormal),
-                horizontalArrangement = Arrangement.SpaceBetween
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(MaterialTheme.spacing.extraSmall)
             ) {
-                Text(
-                    text = "Total price",
-                    style = TextStyle(
-                        fontSize = MaterialTheme.spacing.textMediumExtra,
-                        fontFamily = FontFamily(Font(R.font.notosans_semibold600))
+                items(
+                    items = cartItems,
+                    key = { it.id }
+                ) { cartItmes ->
+                    CartProductItem(
+                        modifier = Modifier.padding(MaterialTheme.spacing.extraSmall),
+                        product = cartItmes,
+                        decrease = decrease,
+                        increase = increase,
+                        delete = delete
                     )
-                )
-                Text(
-                    text = totalPrice,
-                    style = TextStyle(
-                        fontSize = MaterialTheme.spacing.textLarge,
-                        fontFamily = FontFamily(Font(R.font.notosans_semibold600))
-                    )
-                )
+                }
             }
-            Button(
+            Column(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(MaterialTheme.spacing.medium),
-                colors = ButtonColors(
-                    containerColor = YellowColor,
-                    contentColor = Color.White,
-                    disabledContainerColor = Color.White,
-                    disabledContentColor = Color.White,
-                ),
-                shape = RoundedCornerShape(
-                    corner = CornerSize(20.dp)
-                ),
-                onClick = { }
+                    .background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Buy")
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(MaterialTheme.spacing.extralNormal),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Total price",
+                        style = TextStyle(
+                            fontSize = MaterialTheme.spacing.textMediumExtra,
+                            fontFamily = FontFamily(Font(R.font.notosans_semibold600))
+                        )
+                    )
+                    Text(
+                        text = totalPrice,
+                        style = TextStyle(
+                            fontSize = MaterialTheme.spacing.textLarge,
+                            fontFamily = FontFamily(Font(R.font.notosans_semibold600))
+                        )
+                    )
+                }
+                Button(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(MaterialTheme.spacing.medium),
+                    colors = ButtonColors(
+                        containerColor = YellowColor,
+                        contentColor = Color.White,
+                        disabledContainerColor = Color.White,
+                        disabledContentColor = Color.White,
+                    ),
+                    shape = RoundedCornerShape(
+                        corner = CornerSize(20.dp)
+                    ),
+                    onClick = { }
+                ) {
+                    Text(text = "Buy")
+                }
             }
         }
     }
@@ -127,7 +167,11 @@ fun CartProductScreenPreview() {
             )
         ),
         totalPrice = "399.45",
+        actionState = DisplayActionState(isOpen = false, actionCartState = ActionCartState.ConfirmDelete),
         decrease = {},
-        increase = {}
+        increase = {},
+        delete = {},
+        confirmDelete = {}
+
     )
 }

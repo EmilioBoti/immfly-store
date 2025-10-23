@@ -11,3 +11,17 @@ data class CartItemState(
     val quantity: Int,
     val stock: Int,
 )
+
+data class DisplayActionState(
+    val isOpen: Boolean,
+    val actionCartState: ActionCartState?
+)
+
+sealed class ActionCartState {
+    data object ConfirmDelete: ActionCartState()
+    data object DeleteSuccess: ActionCartState()
+    data class CartError(
+        val isError: Boolean,
+        val message: String
+    ): ActionCartState()
+}

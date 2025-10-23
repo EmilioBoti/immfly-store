@@ -14,13 +14,17 @@ fun CartProductStateful(
 ) {
 
     val cartState by viewModel.products.collectAsStateWithLifecycle()
+    val actionState by viewModel.actionState.collectAsStateWithLifecycle()
 
     CartProductScreen(
         paddingValues = paddingValues,
         cartItems = cartState.products,
         totalPrice = cartState.totalPrice,
+        actionState = actionState,
         decrease = { cartItem -> viewModel.decreaseItemCuantity(cartItem) },
-        increase = { cartItem -> viewModel.increaseItemCuantity(cartItem) }
+        increase = { cartItem -> viewModel.increaseItemCuantity(cartItem) },
+        delete = { cartItem -> viewModel.deleteItem(cartItem) },
+        confirmDelete = { isConfirmed -> viewModel.confirmDelete(isConfirmed) }
     )
 
 }

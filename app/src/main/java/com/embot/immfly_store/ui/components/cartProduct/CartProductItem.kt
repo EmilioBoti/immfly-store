@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.embot.immfly_store.R
 import com.embot.immfly_store.domain.models.uiState.CartItemState
+import com.embot.immfly_store.ui.theme.PrimaryColor
 import com.embot.immfly_store.ui.theme.ReadColor
 import com.embot.immfly_store.ui.theme.spacing
 
@@ -45,7 +47,8 @@ fun CartProductItem(
     modifier: Modifier = Modifier,
     product: CartItemState,
     decrease: (CartItemState) -> Unit,
-    increase : (CartItemState) -> Unit
+    increase : (CartItemState) -> Unit,
+    delete : (CartItemState) -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth()
@@ -129,47 +132,59 @@ fun CartProductItem(
                     maxLines = 2
                 )
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(
-                        modifier = Modifier
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    corner = CornerSize(MaterialTheme.spacing.roundedCornerRadius)
-                                )
-                            )
-                            .background(ReadColor),
-                        onClick = { decrease(product) }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Remove,
-                            contentDescription = null,
+                        IconButton(
+                            modifier = Modifier
+                                .clip(
+                                    shape = RoundedCornerShape(
+                                        corner = CornerSize(MaterialTheme.spacing.roundedCornerRadius)
+                                    )
+                                )
+                                .background(ReadColor),
+                            onClick = { decrease(product) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Remove,
+                                contentDescription = null,
+                            )
+                        }
+                        Text(
+                            text = "${product.quantity}",
+                            style = TextStyle(
+                                fontSize = MaterialTheme.spacing.textMediumExtra,
+                                fontFamily = FontFamily(Font(R.font.notosans_light300)),
+                                fontWeight = FontWeight.W500
+                            ),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 2
                         )
-                    }
-                    Text(
-                        text = "${product.quantity}",
-                        style = TextStyle(
-                            fontSize = MaterialTheme.spacing.textMediumExtra,
-                            fontFamily = FontFamily(Font(R.font.notosans_light300)),
-                            fontWeight = FontWeight.W500
-                        ),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
-                    )
-                    IconButton(
-                        modifier = Modifier
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    corner = CornerSize(MaterialTheme.spacing.roundedCornerRadius)
+                        IconButton(
+                            modifier = Modifier
+                                .clip(
+                                    shape = RoundedCornerShape(
+                                        corner = CornerSize(MaterialTheme.spacing.roundedCornerRadius)
+                                    )
                                 )
+                                .background(ReadColor),
+                            onClick = { increase(product) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = null,
                             )
-                            .background(ReadColor),
-                        onClick = { increase(product) }
-                    ) {
+                        }
+                    }
+                    IconButton(onClick = { delete(product) }) {
                         Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = null,
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete item from your cart",
+                            tint = PrimaryColor
                         )
                     }
                 }
@@ -193,6 +208,7 @@ fun CartProductItemPreview() {
             stock = 2
         ),
         decrease = {},
-        increase = {}
+        increase = {},
+        delete = {}
     )
 }

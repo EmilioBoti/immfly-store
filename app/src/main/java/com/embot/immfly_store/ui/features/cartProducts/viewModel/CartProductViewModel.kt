@@ -1,12 +1,13 @@
 package com.embot.immfly_store.ui.features.cartProducts.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
+import com.embot.immfly_store.domain.models.uiState.ActionCartState
 import com.embot.immfly_store.domain.models.uiState.CartItemState
 import com.embot.immfly_store.domain.models.uiState.CartState
+import com.embot.immfly_store.domain.models.uiState.DisplayActionState
 import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import com.embot.immfly_store.domain.useCase.ConvertCurrencyUseCase
 import com.embot.immfly_store.domain.useCase.Price
@@ -21,12 +22,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.IDN
 import javax.inject.Inject
 
 
@@ -39,8 +40,12 @@ class CartProductViewModel @Inject constructor(
 
     private var updateJob: Job? = null
     private var currency: CurrencyType = CurrencyType.EUR
+    private var itemToDeleteId: String? = null
 
-    private val _products: MutableStateFlow<CartState> = MutableStateFlow(CartState("-.-", 0.0,listOf()))
+    private val _actionState: MutableStateFlow<DisplayActionState> = MutableStateFlow(DisplayActionState(isOpen = false, actionCartState = null))
+    val actionState: StateFlow<DisplayActionState> = _actionState.asStateFlow()
+
+    private val _products: MutableStateFlow<CartState> = MutableStateFlow(CartState("0.0", 0.0,listOf()))
     val products: StateFlow<CartState> = _products.onStart {
         loadData()
     }.stateIn(
@@ -75,11 +80,27 @@ class CartProductViewModel @Inject constructor(
                     }
                 }
                 products.onFailure {
-                    Log.e("error", it.stackTraceToString())
+                    _actionState.update {
+                        it.copy(
+                            isOpen = true,
+                            actionCartState = ActionCartState.CartError(
+                                isError = true,
+                                message = "Failed to load cart items"
+                            )
+                        )
+                    }
                 }
 
             } catch (e: Exception) {
-
+                _actionState.update {
+                    it.copy(
+                        isOpen = true,
+                        actionCartState = ActionCartState.CartError(
+                            isError = true,
+                            message = "Something went wrong, Try again later"
+                        )
+                    )
+                }
             }
         }
     }
@@ -94,6 +115,31 @@ class CartProductViewModel @Inject constructor(
         updateJob = viewModelScope.launch {
             delay(500L)
             cartRepository.updateProductQuantity(id, quantity)
+        }
+    }
+
+    private fun removeProductFromCart(id: String) {
+        viewModelScope.launch {
+            val res = cartRepository.deleteFromCart(id)
+            res.onSuccess {
+                _actionState.update {
+                    it.copy(
+                        isOpen = true,
+                        actionCartState = ActionCartState.DeleteSuccess
+                    )
+                }
+            }
+            res.onFailure {
+                _actionState.update {
+                    it.copy(
+                        isOpen = false,
+                        actionCartState =  ActionCartState.CartError(
+                            isError = true,
+                            message = "Something went wrong trying to remove item from cart"
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -154,5 +200,30 @@ class CartProductViewModel @Inject constructor(
 
     }
 
+    fun deleteItem(cartItem: CartItemState) {
+        itemToDeleteId = cartItem.id
+        _actionState.update {
+            it.copy(
+                isOpen = true,
+                actionCartState = ActionCartState.ConfirmDelete
+            )
+        }
+    }
+
+    fun confirmDelete(confirmed: Boolean) {
+        _actionState.update { it.copy(isOpen = false) }
+        if (confirmed) {
+            itemToDeleteId?.let {
+                _products.update { currentState ->
+                    currentState.copy(
+                        products = currentState.products.filter { items -> items.id != it }
+                    )
+                }
+                removeProductFromCart(it)
+                updateTotalPrice()
+            }
+        }
+
+    }
 
 }
