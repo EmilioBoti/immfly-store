@@ -5,9 +5,14 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CurrencyExchange
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,15 +27,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.embot.immfly_store.R
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.ui.components.bottomNavigation.BottomNavBarView
 import com.embot.immfly_store.ui.components.displayer.CurrencyPopUp
 import com.embot.immfly_store.ui.features.cartProducts.view.CartProductStateful
+import com.embot.immfly_store.ui.features.cartProducts.viewModel.CartProductViewModel
 import com.embot.immfly_store.ui.features.main.viewModel.MainActivityViewModel
 import com.embot.immfly_store.ui.features.productList.view.ProductListScreen
 import com.embot.immfly_store.ui.features.productList.viewModel.ProductListViewModel
@@ -53,23 +64,56 @@ class MainActivity : ComponentActivity() {
             ImmflystoreTheme {
                 val mainViewModel: MainActivityViewModel = hiltViewModel()
                 val navController = rememberNavController()
+                val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route ?: ""
+                val isStartDestination = currentDestination == ProdcutListRoute::class.qualifiedName
 
                 Scaffold(
                     modifier = Modifier.Companion.fillMaxSize(),
                     topBar = {
                         CenterAlignedTopAppBar(
                             title = {
-                                Text(text = "Products")
+                                val title = when(currentDestination) {
+                                    ProdcutListRoute::class.qualifiedName -> "Products"
+                                    CartRoute::class.qualifiedName -> "Cart"
+                                    else -> ""
+                                }
+                                Text(text = title)
+                            },
+                            navigationIcon = {
+                                AnimatedVisibility(
+                                    visible = !isStartDestination,
+                                    enter = EnterTransition.None,
+                                    exit = ExitTransition.None
+                                ) {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowBackIosNew,
+                                            contentDescription = "go back",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
                             },
                             actions = {
-                                IconButton(onClick = {
-                                    mainViewModel.openCurrencyPicker()
-                                    Log.i("CurrencyExchange", "Currency Exchange clicked")
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.CurrencyExchange,
-                                        contentDescription = "Currency exchange"
-                                    )
+                                if (isStartDestination) {
+                                    IconButton(onClick = { mainViewModel.openCurrencyPicker() }) {
+                                        Icon(
+                                            imageVector = Icons.Default.CurrencyExchange,
+                                            contentDescription = "Currency exchange"
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            navController.navigate(CartRoute) {
+                                                popUpTo<CartRoute> { inclusive = true }
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.ShoppingCart,
+                                            contentDescription = "Currency exchange"
+                                        )
+                                    }
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
@@ -81,21 +125,27 @@ class MainActivity : ComponentActivity() {
                     },
                     bottomBar = {
                         var itemSelected by remember { mutableIntStateOf(0) }
-                        BottomNavBarView(
-                            items = NavUtils.navItem,
-                            itemSelected = itemSelected,
-                            onItemSelected = { index ->
-                                itemSelected = index
-                                when(itemSelected) {
-                                    0 -> navController.navigate(ProdcutListRoute) {
-                                        popUpTo<ProdcutListRoute> { inclusive = true }
-                                    }
-                                    1 -> navController.navigate(CartRoute) {
-                                        popUpTo<CartRoute> { inclusive = true }
+                        AnimatedVisibility(
+                            visible = false,
+                            enter = EnterTransition.None,
+                            exit = ExitTransition.None
+                        ) {
+                            BottomNavBarView(
+                                items = NavUtils.navItem,
+                                itemSelected = itemSelected,
+                                onItemSelected = { index ->
+                                    itemSelected = index
+                                    when(itemSelected) {
+                                        0 -> navController.navigate(ProdcutListRoute) {
+                                            popUpTo<ProdcutListRoute> { inclusive = true }
+                                        }
+                                        1 -> navController.navigate(CartRoute) {
+                                            popUpTo<CartRoute> { inclusive = true }
+                                        }
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     val isOpen by mainViewModel.isCurrencyPickerOpen.collectAsStateWithLifecycle()
@@ -124,13 +174,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<CartRoute> {
-
+                            val viewModel: CartProductViewModel = hiltViewModel()
                             CartProductStateful(
-                                paddingValues = innerPadding
+                                paddingValues = innerPadding,
+                                viewModel = viewModel
                             )
                         }
                     }
-
                 }
             }
         }

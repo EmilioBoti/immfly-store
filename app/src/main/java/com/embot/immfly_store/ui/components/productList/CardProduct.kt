@@ -1,8 +1,6 @@
 package com.embot.immfly_store.ui.components.productList
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -182,7 +180,7 @@ fun CardProductPreview() {
             name = "Samsung Galaxy Watch6 Classic BT",
             description = "Este fantástico smartwatch de Samsung cae de precio en el outlet de MediaMarkt. La principal característica de este modelo es su dial giratorio, con el que podemos controlar la navegación del mismo. Permite responder mensajes, llamadas y pagar, además de monitorizar nuestra salud.",
             price = "$339.99",
-            rawPrice = "$339.99",
+            rawPrice = 339.99,
             currencies = listOf(),
             stock = 8,
             imageUrl = "https://raw.githubusercontent.com/EmilioBoti/api-server/refs/heads/master/public/Samsung-Galaxy-watch6-classic-BT.png",
