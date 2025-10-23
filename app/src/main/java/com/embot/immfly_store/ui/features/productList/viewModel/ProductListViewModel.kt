@@ -118,7 +118,7 @@ class ProductListViewModel @Inject constructor(
                 name = prod.name,
                 description = prod.description,
                 price = CurrencyFormatter.formatCurrencyPrice(currencyUseCase.getSelectedCurrencyPrice("${prod.price}", currentCurrencyType.type)),
-                rawPrice = "${prod.price}",
+                rawPrice = prod.price,
                 currencies = getConvertedValues(BigDecimal("${prod.price}")),
                 imageUrl = prod.imageUrl,
                 stock = prod.stock,
@@ -145,7 +145,7 @@ class ProductListViewModel @Inject constructor(
         _product.update {
             it.map { prod ->
                 prod.copy(
-                    price = CurrencyFormatter.formatCurrencyPrice(currencyUseCase.getSelectedCurrencyPrice(prod.rawPrice, currencyType.type)),
+                    price = CurrencyFormatter.formatCurrencyPrice(currencyUseCase.getSelectedCurrencyPrice(prod.rawPrice.toString(), currencyType.type)),
                     currencies = getConvertedValues(BigDecimal(prod.rawPrice))
                 )
             }
@@ -169,8 +169,9 @@ class ProductListViewModel @Inject constructor(
                 id = product.id,
                 name = product.name,
                 description = product.description,
-                price = product.price,
+                price = product.rawPrice,
                 image = product.imageUrl,
+                cuantity = 1,
                 stock = product.stock
             )
             storeProduct(toSave)

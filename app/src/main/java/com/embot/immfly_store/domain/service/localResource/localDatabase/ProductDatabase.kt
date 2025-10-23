@@ -11,7 +11,7 @@ import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
     entities = [
         ProductEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class ProductDatabase: RoomDatabase() {
@@ -30,7 +30,8 @@ abstract class ProductDatabase: RoomDatabase() {
                         context.applicationContext,
                         ProductDatabase::class.java,
                         "immfly_store_db"
-                    ).build()
+                    ).fallbackToDestructiveMigration()
+                        .build()
                     INSTANCE = instance
                     instance
                 }

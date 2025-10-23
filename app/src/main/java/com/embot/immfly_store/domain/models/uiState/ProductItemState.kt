@@ -6,7 +6,7 @@ data class ProductItemState(
     val name: String,
     val description: String,
     val price: String,
-    val rawPrice: String,
+    val rawPrice: Double,
     val currencies: List<String>,
     val imageUrl: String,
     val stock: Int,
