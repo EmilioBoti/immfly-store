@@ -8,5 +8,6 @@ interface ICartProductRepository {
 
     suspend fun getCurrencyRate(): Result<ApiCurrencyRate>
     suspend fun getAllCartProducts(): Result<List<ProductEntity>>
+    suspend fun updateProductQuantity(id: String, quantity: Int): Result<Boolean>
 
 }

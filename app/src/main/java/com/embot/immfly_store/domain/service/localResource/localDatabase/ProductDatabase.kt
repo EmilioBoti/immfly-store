@@ -11,7 +11,7 @@ import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
     entities = [
         ProductEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class ProductDatabase: RoomDatabase() {

@@ -8,6 +8,6 @@ data class CartItemState(
     val price: String,
     val image: String,
     val realPrice: Double,
-    val cuantity: Int,
+    val quantity: Int,
     val stock: Int,
 )

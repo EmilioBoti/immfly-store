@@ -171,7 +171,7 @@ class ProductListViewModel @Inject constructor(
                 description = product.description,
                 price = product.rawPrice,
                 image = product.imageUrl,
-                cuantity = 1,
+                quantity = 1,
                 stock = product.stock
             )
             storeProduct(toSave)

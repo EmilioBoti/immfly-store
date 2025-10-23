@@ -44,8 +44,8 @@ import com.embot.immfly_store.ui.theme.spacing
 fun CartProductItem(
     modifier: Modifier = Modifier,
     product: CartItemState,
-    decrease: () -> Unit,
-    increase: () -> Unit
+    decrease: (CartItemState) -> Unit,
+    increase : (CartItemState) -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth()
@@ -140,7 +140,7 @@ fun CartProductItem(
                                 )
                             )
                             .background(ReadColor),
-                        onClick = decrease
+                        onClick = { decrease(product) }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
@@ -148,7 +148,7 @@ fun CartProductItem(
                         )
                     }
                     Text(
-                        text = "${product.cuantity}",
+                        text = "${product.quantity}",
                         style = TextStyle(
                             fontSize = MaterialTheme.spacing.textMediumExtra,
                             fontFamily = FontFamily(Font(R.font.notosans_light300)),
@@ -165,7 +165,7 @@ fun CartProductItem(
                                 )
                             )
                             .background(ReadColor),
-                        onClick = increase
+                        onClick = { increase(product) }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
@@ -189,7 +189,7 @@ fun CartProductItemPreview() {
             price = "$299.99",
             image = "",
             realPrice = 299.99,
-            cuantity = 1,
+            quantity = 1,
             stock = 2
         ),
         decrease = {},

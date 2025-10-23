@@ -14,9 +14,10 @@ object CurrencyFormatter {
     }
 
     fun formatCurrency(amount: BigDecimal, currencyCode: String, locale: Locale): String {
-        val currencyFormat = NumberFormat.getCurrencyInstance(locale)
-        currencyFormat.currency = Currency.getInstance(currencyCode)
-        return  "${currencyFormat.currency?.symbol ?: ""} $amount"
+        val currencyFormat = NumberFormat.getCurrencyInstance(locale).apply {
+            this.currency = Currency.getInstance(currencyCode)
+        }
+        return  currencyFormat.format(amount)
     }
 
 }

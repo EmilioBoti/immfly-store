@@ -37,4 +37,15 @@ class CartProductRepository @Inject constructor(
         }
     }
 
+    override suspend fun updateProductQuantity(id: String, quantity: Int): Result<Boolean> {
+        return withContext(Dispatchers.IO) {
+            try {
+                localDatabase.updateProductQuantity(id, quantity)
+                Result.success(true)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
 }
