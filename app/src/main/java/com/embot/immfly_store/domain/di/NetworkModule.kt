@@ -2,7 +2,7 @@ package com.embot.immfly_store.domain.di
 
 import android.content.Context
 import com.embot.immfly_store.BuildConfig
-import com.embot.immfly_store.domain.service.IProductService
+import com.embot.immfly_store.domain.service.remoteSource.IProductService
 import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDao
 import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDatabase
 import com.embot.immfly_store.domain.service.localResource.preference.AppDataStore

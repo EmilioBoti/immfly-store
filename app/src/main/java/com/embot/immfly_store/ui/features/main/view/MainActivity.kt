@@ -1,7 +1,6 @@
 package com.embot.immfly_store.ui.features.main.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,16 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.embot.immfly_store.R
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.ui.components.bottomNavigation.BottomNavBarView
 import com.embot.immfly_store.ui.components.displayer.CurrencyPopUp
@@ -177,6 +172,7 @@ class MainActivity : ComponentActivity() {
                             val viewModel: CartProductViewModel = hiltViewModel()
                             CartProductStateful(
                                 paddingValues = innerPadding,
+                                navController = navController,
                                 viewModel = viewModel
                             )
                         }

@@ -20,6 +20,7 @@ data class DisplayActionState(
 sealed class ActionCartState {
     data object ConfirmDelete: ActionCartState()
     data object DeleteSuccess: ActionCartState()
+    data object PaySuccessful: ActionCartState()
     data class CartError(
         val isError: Boolean,
         val message: String

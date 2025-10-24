@@ -32,4 +32,8 @@ interface ProductDao {
     @Query("Update products set quantity = :quantity where id = :id")
     fun updateProductQuantity(id: String, quantity: Int)
 
+    @Transaction
+    @Query("Delete from products")
+    fun clearCart()
+
 }

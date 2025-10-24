@@ -41,7 +41,7 @@ class ProductListViewModel @Inject constructor(
         getAllProducts()
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 1000),
         initialValue = listOf()
     )
 
@@ -68,7 +68,12 @@ class ProductListViewModel @Inject constructor(
                     )
                 }
 
-                cartProducts.onSuccess { cart -> this@ProductListViewModel.cartProducts.addAll(cart)  }
+                cartProducts.onSuccess { cart ->
+                    this@ProductListViewModel.cartProducts.apply {
+                        this.clear()
+                        this.addAll(cart)
+                    }
+                }
 
                 currencyResponse.onSuccess {
                     currencyUseCase.setCurrencyRate(ProductUtils.toAppCurrencyRate(it))
@@ -76,7 +81,9 @@ class ProductListViewModel @Inject constructor(
 
                 productResponse.onSuccess { apiProducts ->
                     val products = ProductUtils.parseToAppProduct(apiProducts)
-                    _product.update { parseToProdcutState(products, this@ProductListViewModel.cartProducts) }
+                    _product.update {
+                        parseToProdcutState(products, this@ProductListViewModel.cartProducts)
+                    }
                 }.onFailure {
                     print(it.message)
                 }
@@ -128,7 +135,7 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun isProdcutICart(prodId: String, cartProducts: ArrayList<ProductEntity>): Boolean {
-        return cartProducts.firstOrNull { it.id == prodId } !== null
+        return cartProducts.firstOrNull { it.id == prodId } != null
     }
 
     private fun updateProduct() {

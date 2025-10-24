@@ -1,7 +1,9 @@
 package com.embot.immfly_store.ui.features.cartProducts.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.embot.immfly_store.domain.models.apiModel.ApiPayOrder
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
 import com.embot.immfly_store.domain.models.uiState.ActionCartState
@@ -115,6 +117,35 @@ class CartProductViewModel @Inject constructor(
         updateJob = viewModelScope.launch {
             delay(500L)
             cartRepository.updateProductQuantity(id, quantity)
+        }
+    }
+
+    fun payCartOrder() {
+        viewModelScope.launch {
+            val items = _products.value.products.map { ApiPayOrder(it.id, it.quantity) }
+            val res = cartRepository.payOrder(items)
+            res.onSuccess {
+                cartRepository.clearCart()
+                loadData()
+                _actionState.update {
+                    it.copy(
+                        isOpen = true,
+                        actionCartState = ActionCartState.PaySuccessful
+                    )
+                }
+            }
+            res.onFailure {
+                _actionState.update {
+                    it.copy(
+                        isOpen = true,
+                        actionCartState = ActionCartState.CartError(
+                            isError = true,
+                            message = "Something went wrong, Try again later"
+                        )
+                    )
+                }
+            }
+
         }
     }
 

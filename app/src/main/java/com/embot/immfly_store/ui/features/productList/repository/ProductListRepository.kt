@@ -4,8 +4,8 @@ import com.embot.immfly_store.domain.models.apiModel.ApiCurrencyRate
 import com.embot.immfly_store.domain.models.apiModel.ApiProduct
 import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
 import com.embot.immfly_store.domain.service.DispatchersProvider
-import com.embot.immfly_store.domain.service.IProductService
 import com.embot.immfly_store.domain.service.localResource.localDatabase.ProductDao
+import com.embot.immfly_store.domain.service.remoteSource.IProductService
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
