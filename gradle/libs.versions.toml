@@ -10,6 +10,11 @@ activityCompose = "1.11.0"
 composeBom = "2025.10.00"
 #kotlinKsp
 kotlinKsp = "2.2.20-2.0.4"
+
+#Testing
+truth = "1.4.5"
+coreTesting = "1.1.1"
+mockk = "1.14.6"
 #Coil
 coilComposeVersion = "2.7.0"
 #Navigation
@@ -21,7 +26,7 @@ lifecycleViewModelKtx = "2.9.4"
 #Datastore Preferences
 datastorePreferences = "1.1.7"
 #Room-Database
-roomRuntime = "2.8.2"
+roomRuntime = "2.8.3"
 #Retrofit
 retrofit = "3.0.0"
 loggingInterceptor = "5.2.1"
@@ -44,6 +49,13 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+#Testting
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesCore" }
+core-testing = { module = "android.arch.core:core-testing", version.ref = "coreTesting" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroid" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 #Icons
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }

@@ -1,6 +1,7 @@
 package com.embot.immfly_store.domain.useCase
 
 import com.embot.immfly_store.domain.models.appModel.CurrencyRateModel
+import com.embot.immfly_store.domain.models.appModel.Price
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -8,12 +9,6 @@ import java.util.Currency
 import java.util.Locale
 import javax.inject.Inject
 
-
-data class Price(
-    val price: BigDecimal,
-    val currency: Currency,
-    val locale: Locale,
-)
 
 class ConvertCurrencyUseCase @Inject constructor() {
 

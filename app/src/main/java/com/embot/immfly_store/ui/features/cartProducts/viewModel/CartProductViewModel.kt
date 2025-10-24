@@ -1,9 +1,9 @@
 package com.embot.immfly_store.ui.features.cartProducts.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.embot.immfly_store.domain.models.apiModel.ApiPayOrder
+import com.embot.immfly_store.domain.models.appModel.Price
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
 import com.embot.immfly_store.domain.models.uiState.ActionCartState
@@ -12,7 +12,6 @@ import com.embot.immfly_store.domain.models.uiState.CartState
 import com.embot.immfly_store.domain.models.uiState.DisplayActionState
 import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import com.embot.immfly_store.domain.useCase.ConvertCurrencyUseCase
-import com.embot.immfly_store.domain.useCase.Price
 import com.embot.immfly_store.ui.features.cartProducts.repository.ICartProductRepository
 import com.embot.immfly_store.ui.utils.CurrencyFormatter
 import com.embot.immfly_store.ui.utils.ProductUtils

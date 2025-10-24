@@ -1,6 +1,6 @@
 package com.embot.immfly_store.ui.utils
 
-import com.embot.immfly_store.domain.useCase.Price
+import com.embot.immfly_store.domain.models.appModel.Price
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Currency
@@ -17,7 +17,7 @@ object CurrencyFormatter {
         val currencyFormat = NumberFormat.getCurrencyInstance(locale).apply {
             this.currency = Currency.getInstance(currencyCode)
         }
-        return  currencyFormat.format(amount)
+        return currencyFormat.format(amount)
     }
 
 }
