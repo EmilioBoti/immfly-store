@@ -4,22 +4,20 @@
 
 # Requirements
 
-# Android Studio vertion [Android Studio Narwhal 4 Feature Drop | 2025.1.4]
-# Emulator: from any device running api level above [API level 26]
-# AGP verion [8.13.0]
-# Kotlin veriton: [2.2.20]
-
-
+    # Android Studio vertion [Android Studio Narwhal 4 Feature Drop | 2025.1.4]
+    # Emulator: from any device running api level above [API level 26]
+    # AGP verion [8.13.0]
+    # Kotlin veriton: [2.2.20]
 
 # Api server requirement
 
-# node verion [22.18.0] it probably will work with another version, but keep in mind this version
+    # node verion [22.18.0] it probably will work with another version, but keep in mind this version
 
 # firt must run the apir server
 
 
-    ## api-Server
-# clone the project: [https://github.com/EmilioBoti/api-server]
+## api-Server
+    # clone the project: [https://github.com/EmilioBoti/api-server]
  
 # api-server setup- in your terminal inside the project file run:
     
@@ -32,10 +30,9 @@
 
 # server running in [http://localhost:3000/products]
 
-    
-    # App
+# App
 
-# clone the project: [https://github.com/EmilioBoti/immfly-store]
+    # clone the project: [https://github.com/EmilioBoti/immfly-store]
 
     # open Android Studio
     # Async Gdle and ensure it load with no errors
