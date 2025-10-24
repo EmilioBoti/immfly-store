@@ -30,9 +30,9 @@
 
 # server running in [http://localhost:3000/products]
 
-# App
+# App setup
 
-    # clone the project: [https://github.com/EmilioBoti/immfly-store]
+    # repositoty: [https://github.com/EmilioBoti/immfly-store]
 
     # open Android Studio
     # Async Gdle and ensure it load with no errors
