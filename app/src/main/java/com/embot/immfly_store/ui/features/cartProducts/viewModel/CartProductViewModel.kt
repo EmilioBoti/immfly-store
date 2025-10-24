@@ -94,6 +94,7 @@ class CartProductViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
+                e.printStackTrace()
                 _actionState.update {
                     it.copy(
                         isOpen = true,

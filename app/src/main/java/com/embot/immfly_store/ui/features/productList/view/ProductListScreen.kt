@@ -12,12 +12,13 @@ fun ProductListScreen(
     paddingValues: PaddingValues,
     viewModel: ProductListViewModel
 ) {
-    val products by viewModel.product.collectAsStateWithLifecycle()
+    val productsState by viewModel.productsState.collectAsStateWithLifecycle()
 
     ProductListScreenStateful(
         paddingValues = paddingValues,
-        products
-    ) { product ->
-        viewModel.onAction(product)
-    }
+        error = productsState.error,
+        products = productsState.products,
+        onAction = { product -> viewModel.onAction(product) },
+        onDismissPopup = { viewModel.onDismissError() }
+    )
 }

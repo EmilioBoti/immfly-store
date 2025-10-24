@@ -68,9 +68,9 @@ class ConvertCurrencyUseCase @Inject constructor() {
         toCurrency: String
     ): BigDecimal {
         val fromRate = currencyRate.rates[getCurrency(fromCurrency)]
-            ?: error("Missing rate for $fromCurrency")
+            ?: BigDecimal.ONE
         val toRate = currencyRate.rates[getCurrency(toCurrency)]
-            ?: error("Missing rate for $toCurrency")
+            ?: BigDecimal.ONE
 
         // toRate / fromRate
         val conversionRate = toRate.divide(fromRate, 10, RoundingMode.HALF_EVEN)

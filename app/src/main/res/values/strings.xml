@@ -17,4 +17,5 @@
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
     <string name="title_error">Error</string>
+    <string name="empty_product_list">No product available</string>
 </resources>

@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.embot.immfly_store.domain.models.appModel.ProductModel
 import com.embot.immfly_store.domain.models.constants.CurrencyType
 import com.embot.immfly_store.domain.models.roomEntity.ProductEntity
+import com.embot.immfly_store.domain.models.uiState.ErrorState
+import com.embot.immfly_store.domain.models.uiState.GenericState
 import com.embot.immfly_store.domain.models.uiState.ProductItemState
+import com.embot.immfly_store.domain.models.uiState.ProductListState
 import com.embot.immfly_store.domain.service.localResource.preference.IAppDataStore
 import com.embot.immfly_store.domain.useCase.ConvertCurrencyUseCase
 import com.embot.immfly_store.ui.features.productList.repository.IProductListRepository
@@ -22,6 +25,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -36,13 +41,13 @@ class ProductListViewModel @Inject constructor(
     private var currentCurrencyType: CurrencyType = CurrencyType.EUR
     private var cartProducts: ArrayList<ProductEntity> = arrayListOf()
 
-    private val _product: MutableStateFlow<List<ProductItemState>> = MutableStateFlow(listOf())
-    val product: StateFlow<List<ProductItemState>> = _product.onStart {
+    private val _productsState: MutableStateFlow<ProductListState> = MutableStateFlow(ProductListState(GenericState(), products = listOf()))
+    val productsState: StateFlow<ProductListState> = _productsState.onStart {
         getAllProducts()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 1000),
-        initialValue = listOf()
+        initialValue = ProductListState(GenericState(), products = listOf())
     )
 
 
@@ -53,6 +58,7 @@ class ProductListViewModel @Inject constructor(
 
     private fun getAllProducts() {
         viewModelScope.launch {
+            isLoading(true)
             try {
                 currentCurrencyType = preferences.getCurrencyType().first()
 
@@ -81,15 +87,48 @@ class ProductListViewModel @Inject constructor(
 
                 productResponse.onSuccess { apiProducts ->
                     val products = ProductUtils.parseToAppProduct(apiProducts)
-                    _product.update {
-                        parseToProdcutState(products, this@ProductListViewModel.cartProducts)
+                    _productsState.update {
+                        it.copy(
+                            products = parseToProdcutState(products, this@ProductListViewModel.cartProducts)
+                        )
                     }
-                }.onFailure {
-                    print(it.message)
+                }.onFailure { e ->
+                    handleError(true, getError(e))
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                handleError( true, getError(e))
+            } finally {
+                isLoading(false)
             }
+        }
+    }
+
+    private fun getError(e: Throwable): ErrorState {
+        return when (e) {
+            is IOException -> ErrorState.NetworkError
+            is HttpException -> ErrorState.NetworkError
+            else -> ErrorState.UnknownError
+        }
+    }
+
+    private fun handleError(isError: Boolean, errorState: ErrorState) {
+        _productsState.update {
+            it.copy(
+                error =it.error.copy(
+                    isError = isError,
+                    error = errorState
+                )
+            )
+        }
+    }
+
+    private fun isLoading(isLoading: Boolean) {
+        _productsState.update {
+            it.copy(
+                error =it.error.copy(
+                    isLoading = isLoading
+                )
+            )
         }
     }
 
@@ -100,7 +139,7 @@ class ProductListViewModel @Inject constructor(
                 cartProducts.add(productEntity)
                 updateProduct()
             }
-            res.onFailure { }
+            res.onFailure { e -> handleError(true, getError(e)) }
         }
     }
 
@@ -111,7 +150,7 @@ class ProductListViewModel @Inject constructor(
                 cartProducts.remove(productEntity)
                 updateProduct()
             }
-            res.onFailure { }
+            res.onFailure { e -> handleError(true, getError(e)) }
         }
     }
 
@@ -139,23 +178,27 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun updateProduct() {
-        _product.update {
-            it.map { prod ->
-                prod.copy(
+        _productsState.update { state ->
+            state.copy(
+                products = state.products.map { prod ->
+                    prod.copy(
                     isBucketed = isProdcutICart(prod.id, cartProducts)
-                )
-            }
+                    )
+                }
+            )
         }
     }
 
     private fun udpateProductCurrenry(currencyType: CurrencyType) {
-        _product.update {
-            it.map { prod ->
-                prod.copy(
-                    price = CurrencyFormatter.formatCurrencyPrice(currencyUseCase.getSelectedCurrencyPrice(prod.rawPrice.toString(), currencyType.type)),
-                    currencies = getConvertedValues(BigDecimal(prod.rawPrice))
-                )
-            }
+        _productsState.update { state ->
+            state.copy(
+                products = state.products.map { prod ->
+                    prod.copy(
+                        price = CurrencyFormatter.formatCurrencyPrice(currencyUseCase.getSelectedCurrencyPrice(prod.rawPrice.toString(), currencyType.type)),
+                        currencies = getConvertedValues(BigDecimal(prod.rawPrice))
+                    )
+                }
+            )
         }
     }
 
@@ -165,6 +208,10 @@ class ProductListViewModel @Inject constructor(
             val locale = currencyUseCase.getLocaleCurrency(target?.currencyCode ?: "")
             CurrencyFormatter.formatCurrency(value, currencyCode = target?.currencyCode ?: "", locale)
         }.map { it.value }
+    }
+
+    fun onDismissError() {
+        handleError(false, ErrorState.None)
     }
 
     fun onAction(product: ProductItemState) {
