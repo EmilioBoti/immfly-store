@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.embot.immfly_store.HiltTestRunner"
     }
 
     buildTypes {
@@ -83,6 +83,7 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.compiler)
 
     // Icons
 //    implementation(libs.androidx.compose.material3.icons.extended)

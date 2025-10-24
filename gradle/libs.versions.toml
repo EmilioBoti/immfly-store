@@ -55,6 +55,7 @@ truth = { module = "com.google.truth:truth", version.ref = "truth" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesCore" }
 core-testing = { module = "android.arch.core:core-testing", version.ref = "coreTesting" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroid" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 #Icons
