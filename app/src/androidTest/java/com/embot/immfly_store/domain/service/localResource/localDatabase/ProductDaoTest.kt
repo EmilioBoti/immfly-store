@@ -79,6 +79,7 @@ class ProductDaoTest {
         )
         //WHEN
         dao.storeToCart(productEntity)
+        dao.clearCart()
         val products = dao.getCartProducts()
         assertThat(products).isEmpty()
     }
